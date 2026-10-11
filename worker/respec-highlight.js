@@ -7,7 +7,11 @@ import javascript from "highlight.js/lib/languages/javascript";
 import json from "highlight.js/lib/languages/json";
 import xml from "highlight.js/lib/languages/xml";
 import yaml from "highlight.js/lib/languages/yaml";
+import turtle from "./languages/turtle.js";
 
+// Turtle is left out of autodetection: unmarked blocks, and HTTP message bodies
+// highlighted as a sublanguage, are commonly JSON or YAML, where "key: value"
+// would read as Turtle prefixed names. Blocks marked class="turtle" still work.
 highlight.configure({
   tabReplace: "  ", // 2 spaces
   languages: ["abnf", "css", "http", "javascript", "json", "xml", "yaml"],
@@ -20,5 +24,6 @@ highlight.registerLanguage("javascript", javascript);
 highlight.registerLanguage("json", json);
 highlight.registerLanguage("xml", xml);
 highlight.registerLanguage("yaml", yaml);
+highlight.registerLanguage("turtle", turtle);
 
 export default highlight;

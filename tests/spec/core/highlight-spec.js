@@ -177,6 +177,37 @@ describe("Core — Highlight", () => {
     expect(lastCode.classList).toContain("http");
   });
 
+  it("highlights Turtle blocks, scoping prefixes apart from local names", async () => {
+    const body = `
+      <section>
+        <pre class="turtle"># a comment
+@prefix ex: &lt;http://example.org/&gt; .
+&lt;&gt; a ex:Container ;
+  ex:size "47"^^ex:long ;
+  ex:items 2 .</pre>
+      </section>
+    `;
+    const ops = makeStandardOps(null, body);
+    const doc = await makeRSDoc(ops);
+    const code = doc.querySelector("pre > code.hljs");
+    expect(code.classList).toContain("turtle");
+    const textOf = scope =>
+      [...code.querySelectorAll(`.hljs-${scope}`)].map(el => el.textContent);
+    expect(textOf("comment")).toEqual(["# a comment"]);
+    expect(textOf("keyword")).toEqual(["@prefix", "a"]);
+    expect(textOf("type")).toEqual(["ex:", "ex:", "ex:", "ex:", "ex:"]);
+    expect(textOf("symbol")).toEqual([
+      "<http://example.org/>",
+      "<>",
+      "Container",
+      "size",
+      "long",
+      "items",
+    ]);
+    expect(textOf("string")).toEqual(['"47"']);
+    expect(textOf("number")).toEqual(["2"]);
+  });
+
   it("highlights pre elements inside a closed details element", async () => {
     const body = `
       <section>
